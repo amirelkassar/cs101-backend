@@ -1,5 +1,7 @@
-import { IsNotEmpty, IsOptional, IsString, IsArray, IsMongoId, IsInt, Min } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsArray, IsMongoId, IsInt, Min, ValidateNested } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+import { SectionDto } from './section.dto';
 
 export class CreatePageDto {
   @ApiProperty({ description: 'Unique page identifier (slug or custom id)', example: 'introduction' })
@@ -37,9 +39,12 @@ export class CreatePageDto {
   @IsOptional()
   content?: any;
 
-  @ApiPropertyOptional({ description: 'Structured sections content', type: 'object', isArray: true, additionalProperties: true })
+  @ApiPropertyOptional({ description: 'Structured sections content', type: SectionDto, isArray: true })
   @IsOptional()
-  sections?: any[];
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => SectionDto)
+  sections?: SectionDto[];
 
   @ApiPropertyOptional({ description: 'Related lecture id', example: '64f0c2e39b1c2a5f8f1c1234' })
   @IsOptional()
