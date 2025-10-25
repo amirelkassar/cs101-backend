@@ -15,7 +15,7 @@ import { LoggerModule } from './logger/logger.module';
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (config: ConfigService) => ({
-        uri: config.get<string>('MONGODB_URI') ?? config.get<string>('DATABASE_URL'),
+        uri: config.get<string>('DATABASE_URL'),
       }),
       inject: [ConfigService],
     }),
