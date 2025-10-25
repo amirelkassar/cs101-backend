@@ -14,7 +14,7 @@ export class PagesService {
   }
 
   async findById(id: string): Promise<Page> {
-    const doc = await this.pageModel.findOne({ slug: id }).lean();
+    const doc = await this.pageModel.findOne({ _id: id }).lean();
     if (!doc) throw new NotFoundException(`Page ${id} not found`);
     return doc as Page;
   }
@@ -25,13 +25,13 @@ export class PagesService {
   }
 
   async update(id: string, data: Partial<Page>): Promise<Page> {
-    const updated = await this.pageModel.findOneAndUpdate({ slug: id }, data, { new: true }).lean();
+    const updated = await this.pageModel.findOneAndUpdate({ _id: id }, data, { new: true }).lean();
     if (!updated) throw new NotFoundException(`Page ${id} not found`);
     return updated as Page;
   }
 
   async remove(id: string): Promise<{ deleted: boolean }> {
-    const res = await this.pageModel.findOneAndDelete({ slug: id }).lean();
+    const res = await this.pageModel.findOneAndDelete({ _id: id }).lean();
     if (!res) throw new NotFoundException(`Page ${id} not found`);
     return { deleted: true };
   }
