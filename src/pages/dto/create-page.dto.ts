@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
+import { SectionSchema } from './section.dto';
 
 export const CreatePageSchema = z.object({
   slug: z.string().min(1, 'slug is required').optional(),
@@ -8,7 +9,7 @@ export const CreatePageSchema = z.object({
   description: z.string().optional(),
   tags: z.array(z.string()).optional(),
   estimatedTime: z.number().int().min(0).optional(),
-  sections: z.array(z.any()).optional(),
+  sections: z.array(SectionSchema).optional(),
   lectureId: z
     .string()
     .regex(/^[0-9a-fA-F]{24}$/, 'lectureId must be a MongoId')

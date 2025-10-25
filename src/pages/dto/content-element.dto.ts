@@ -10,7 +10,7 @@ export enum ContentElementType {
   Quote = 'quote',
 }
 
-const BaseElementSchema = z.object({
+export const BaseElementSchema = z.object({
   type: z.enum(ContentElementType),
   title: z.string().optional(),
 });
