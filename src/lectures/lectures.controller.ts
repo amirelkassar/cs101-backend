@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Delete, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Delete } from '@nestjs/common';
 import { LecturesService } from './lectures.service';
 import { CreateLectureDto } from './dto/create-lecture.dto';
 import { UpdateLectureDto } from './dto/update-lecture.dto';
@@ -6,7 +6,6 @@ import { LectureIdParam } from './dto/lecture-id.param';
 import { ApiTags, ApiOperation, ApiOkResponse, ApiCreatedResponse, ApiParam, ApiNotFoundResponse, ApiBadRequestResponse } from '@nestjs/swagger';
 import { ApiBody } from '@nestjs/swagger';
 
-@UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
 @ApiTags('lectures')
 @Controller('lectures')
 export class LecturesController {

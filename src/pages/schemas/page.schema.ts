@@ -5,8 +5,6 @@ export type PageDocument = HydratedDocument<Page>;
 
 @Schema({ timestamps: true })
 export class Page {
-  @Prop({ required: true, unique: true })
-  id: string;
 
   @Prop({ unique: true })
   slug?: string;

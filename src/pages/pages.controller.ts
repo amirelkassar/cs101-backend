@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Delete, UsePipes, ValidationPipe, Query } from '@nestjs/common'
+import { Body, Controller, Get, Param, Post, Put, Delete, Query } from '@nestjs/common'
 import { PagesService } from './pages.service'
 import { CreatePageDto } from './dto/create-page.dto'
 import { UpdatePageDto } from './dto/update-page.dto'
@@ -7,7 +7,6 @@ import { PagesQueryDto } from './dto/pages-query.dto'
 import { ApiTags, ApiOperation, ApiOkResponse, ApiCreatedResponse, ApiParam, ApiNotFoundResponse, ApiBadRequestResponse, ApiBody, ApiQuery } from '@nestjs/swagger'
 
 @ApiTags('pages')
-@UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
 @Controller('pages')
 export class PagesController {
   constructor(private readonly pages: PagesService) {}

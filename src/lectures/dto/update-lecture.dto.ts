@@ -1,15 +1,9 @@
-import { IsInt, IsNotEmpty, IsOptional, Min } from 'class-validator';
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { z } from 'zod';
+import { createZodDto } from 'nestjs-zod';
 
-export class UpdateLectureDto {
-  @ApiPropertyOptional({ description: 'Lecture title', example: 'Introduction to Algorithms', minLength: 1 })
-  @IsOptional()
-  @IsNotEmpty()
-  title?: string;
+export const UpdateLectureSchema = z.object({
+  title: z.string().min(1, 'title is required').optional(),
+  order: z.number().int().min(0).optional(),
+});
 
-  @ApiPropertyOptional({ description: 'Display order (non-negative integer)', example: 1, minimum: 0 })
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  order?: number;
-}
+export class UpdateLectureDto extends createZodDto(UpdateLectureSchema) {}

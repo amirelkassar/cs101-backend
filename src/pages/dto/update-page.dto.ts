@@ -1,49 +1,19 @@
-import { IsNotEmpty, IsOptional, IsString, IsArray, IsMongoId, IsInt, Min, ValidateNested } from 'class-validator';
-import { ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { SectionDto } from './section.dto';
+import { z } from 'zod';
+import { createZodDto } from 'nestjs-zod';
 
-export class UpdatePageDto {
-  @ApiPropertyOptional({ description: 'Page title', example: 'Getting Started' })
-  @IsOptional()
-  @IsString()
-  @IsNotEmpty()
-  title?: string;
+export const UpdatePageSchema = z.object({
+  title: z.string().min(1, 'title is required').optional(),
+  icon: z.string().min(1, 'icon is required').optional(),
+  slug: z.string().min(1, 'slug is required').optional(),
+  description: z.string().optional(),
+  tags: z.array(z.string()).optional(),
+  estimatedTime: z.number().int().min(0).optional(),
+  content: z.any().optional(),
+  sections: z.array(z.any()).optional(),
+  lectureId: z
+    .string()
+    .regex(/^[0-9a-fA-F]{24}$/, 'lectureId must be a MongoId')
+    .optional(),
+});
 
-  @ApiPropertyOptional({ description: 'Unique human-readable slug', example: 'intro-to-cs' })
-  @IsOptional()
-  @IsString()
-  slug?: string;
-
-  @ApiPropertyOptional({ description: 'Short description', example: 'Overview of the course' })
-  @IsOptional()
-  @IsString()
-  description?: string;
-
-  @ApiPropertyOptional({ description: 'Tags for the page', type: 'string', isArray: true, example: ['basics', 'intro'] })
-  @IsOptional()
-  @IsArray()
-  tags?: string[];
-
-  @ApiPropertyOptional({ description: 'Estimated reading time (minutes)', example: 5, minimum: 0 })
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  estimatedTime?: number;
-
-  @ApiPropertyOptional({ description: 'Arbitrary JSON content', type: 'object', additionalProperties: true })
-  @IsOptional()
-  content?: any;
-
-  @ApiPropertyOptional({ description: 'Structured sections content', type: SectionDto, isArray: true })
-  @IsOptional()
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => SectionDto)
-  sections?: SectionDto[];
-
-  @ApiPropertyOptional({ description: 'Related lecture id', example: '64f0c2e39b1c2a5f8f1c1234' })
-  @IsOptional()
-  @IsMongoId()
-  lectureId?: string;
-}
+export class UpdatePageDto extends createZodDto(UpdatePageSchema) {}

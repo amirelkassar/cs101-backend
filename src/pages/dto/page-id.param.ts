@@ -1,9 +1,8 @@
-import { IsNotEmpty, IsString } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { z } from 'zod';
+import { createZodDto } from 'nestjs-zod';
 
-export class PageIdParam {
-  @ApiProperty({ description: 'Unique page identifier', example: 'introduction' })
-  @IsString()
-  @IsNotEmpty()
-  id: string;
-}
+export const PageIdParamSchema = z.object({
+  id: z.string().min(1, 'id is required'),
+});
+
+export class PageIdParam extends createZodDto(PageIdParamSchema) {}

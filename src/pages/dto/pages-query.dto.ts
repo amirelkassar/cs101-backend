@@ -1,9 +1,11 @@
-import { IsMongoId, IsOptional } from 'class-validator';
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { z } from 'zod';
+import { createZodDto } from 'nestjs-zod';
 
-export class PagesQueryDto {
-  @ApiPropertyOptional({ description: 'Filter by related lecture id', example: '64f0c2e39b1c2a5f8f1c1234' })
-  @IsOptional()
-  @IsMongoId()
-  lectureId?: string;
-}
+export const PagesQuerySchema = z.object({
+  lectureId: z
+    .string()
+    .regex(/^[0-9a-fA-F]{24}$/, 'lectureId must be a MongoId')
+    .optional(),
+});
+
+export class PagesQueryDto extends createZodDto(PagesQuerySchema) {}

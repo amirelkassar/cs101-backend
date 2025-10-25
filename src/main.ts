@@ -7,6 +7,7 @@ import { LoggerService } from './logger/logger.service';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AllExceptionsFilter } from './interceptors/all-exceptions.filter';
 import { ResponseTransformInterceptor } from './interceptors/response-transform.interceptor';
+import { ZodValidationPipe } from 'nestjs-zod';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -18,6 +19,10 @@ async function bootstrap() {
   app.useGlobalInterceptors(new LoggingInterceptor(loggerService));
   app.useGlobalInterceptors(new ResponseTransformInterceptor());
   app.useGlobalFilters(new AllExceptionsFilter(loggerService));
+  
+  // Global Zod validation pipe for clearer, fluent validation
+  app.useGlobalPipes(new ZodValidationPipe());
+
   app.enableCors({ origin: true });
 
   const swaggerConfig = new DocumentBuilder()

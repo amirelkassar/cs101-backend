@@ -1,5 +1,5 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsArray, ArrayNotEmpty, IsBoolean, IsEnum, IsInt, Min, IsOptional, IsString } from 'class-validator';
+import { z } from 'zod';
+import { createZodDto } from 'nestjs-zod';
 
 export enum ContentElementType {
   Paragraph = 'paragraph',
@@ -10,64 +10,37 @@ export enum ContentElementType {
   Quote = 'quote',
 }
 
-export class BaseElementDto {
-  @ApiProperty({ description: 'Element type', enum: ContentElementType, example: ContentElementType.Paragraph })
-  @IsEnum(ContentElementType)
-  type: ContentElementType;
+const BaseElementSchema = z.object({
+  type: z.enum(ContentElementType),
+  title: z.string().optional(),
+});
 
-  @ApiPropertyOptional({ description: 'Element title', example: 'Overview' })
-  @IsOptional()
-  @IsString()
-  title?: string;
-}
+export const ParagraphElementSchema = BaseElementSchema.extend({
+  type: z.literal(ContentElementType.Paragraph),
+  text: z.string(),
+});
 
-export class ParagraphElementDto extends BaseElementDto {
-  @ApiProperty({ description: 'Paragraph text', example: 'Welcome to CS101.' })
-  @IsString()
-  text: string;
-}
+export const ListElementSchema = BaseElementSchema.extend({
+  type: z.literal(ContentElementType.List),
+  ordered: z.boolean().optional(),
+  items: z.array(z.string()).min(1, 'items must contain at least one item'),
+});
 
-export class ListElementDto extends BaseElementDto {
-  @ApiPropertyOptional({ description: 'Whether the list is ordered', example: false })
-  @IsOptional()
-  @IsBoolean()
-  ordered?: boolean;
+export const CodeElementSchema = BaseElementSchema.extend({
+  type: z.literal(ContentElementType.Code),
+  language: z.string().optional(),
+  code: z.string(),
+});
 
-  @ApiProperty({ description: 'List items', type: 'string', isArray: true, example: ['Algorithms', 'Data Structures', 'Systems'] })
-  @IsArray()
-  @ArrayNotEmpty()
-  items: string[];
-}
+export const ImageElementSchema = BaseElementSchema.extend({
+  type: z.literal(ContentElementType.Image),
+  src: z.string(),
+  height: z.number().int().min(0).optional(),
+  style: z.string().optional(),
+  attribution: z.string().optional(),
+});
 
-export class CodeElementDto extends BaseElementDto {
-  @ApiPropertyOptional({ description: 'Programming language hint', example: 'javascript' })
-  @IsOptional()
-  @IsString()
-  language?: string;
-
-  @ApiProperty({ description: 'Code content', example: "console.log('Hello, world!');" })
-  @IsString()
-  code: string;
-}
-
-export class ImageElementDto extends BaseElementDto {
-  @ApiProperty({ description: 'Image source URL', example: 'https://example.com/image.png' })
-  @IsString()
-  src: string;
-
-  @ApiPropertyOptional({ description: 'Image height in pixels', example: 240, minimum: 0 })
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  height?: number;
-
-  @ApiPropertyOptional({ description: 'Style hint', example: 'rounded' })
-  @IsOptional()
-  @IsString()
-  style?: string;
-
-  @ApiPropertyOptional({ description: 'Attribution or credits', example: 'Photo by Jane Doe' })
-  @IsOptional()
-  @IsString()
-  attribution?: string;
-}
+export class ParagraphElementDto extends createZodDto(ParagraphElementSchema) {}
+export class ListElementDto extends createZodDto(ListElementSchema) {}
+export class CodeElementDto extends createZodDto(CodeElementSchema) {}
+export class ImageElementDto extends createZodDto(ImageElementSchema) {}
