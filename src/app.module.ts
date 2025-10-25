@@ -8,10 +8,14 @@ import { LoggerModule } from './logger/logger.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: process.env.NODE_ENV === 'production' ? ['.env.production', '.env'] : ['.env'],
+    }),
     MongooseModule.forRootAsync({
+      imports: [ConfigModule],
       useFactory: (config: ConfigService) => ({
-        uri: config.get<string>('MONGODB_URI'),
+        uri: config.get<string>('MONGODB_URI') ?? config.get<string>('DATABASE_URL'),
       }),
       inject: [ConfigService],
     }),
