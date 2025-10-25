@@ -3,9 +3,10 @@ import { AppModule } from './app.module';
 import { WinstonModule } from 'nest-winston';
 import { winstonTransports } from './logger/winston.config';
 import { LoggingInterceptor } from './logger/logging.interceptor';
-import { AllExceptionsFilter } from './logger/all-exceptions.filter';
 import { LoggerService } from './logger/logger.service';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { AllExceptionsFilter } from './interceptors/all-exceptions.filter';
+import { ResponseTransformInterceptor } from './interceptors/response-transform.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -15,6 +16,7 @@ async function bootstrap() {
   const loggerService = app.get(LoggerService);
 
   app.useGlobalInterceptors(new LoggingInterceptor(loggerService));
+  app.useGlobalInterceptors(new ResponseTransformInterceptor());
   app.useGlobalFilters(new AllExceptionsFilter(loggerService));
   app.enableCors({ origin: true });
 
