@@ -22,6 +22,9 @@ let PagesService = class PagesService {
     constructor(pageModel) {
         this.pageModel = pageModel;
     }
+    async findAll() {
+        return this.pageModel.find().sort({ title: 1 }).lean();
+    }
     async findById(id) {
         const doc = await this.pageModel.findOne({ id }).lean();
         if (!doc)
@@ -31,6 +34,18 @@ let PagesService = class PagesService {
     async create(data) {
         const created = await this.pageModel.create(data);
         return created.toObject();
+    }
+    async update(id, data) {
+        const updated = await this.pageModel.findOneAndUpdate({ id }, data, { new: true }).lean();
+        if (!updated)
+            throw new common_1.NotFoundException(`Page ${id} not found`);
+        return updated;
+    }
+    async remove(id) {
+        const res = await this.pageModel.findOneAndDelete({ id }).lean();
+        if (!res)
+            throw new common_1.NotFoundException(`Page ${id} not found`);
+        return { deleted: true };
     }
 };
 exports.PagesService = PagesService;

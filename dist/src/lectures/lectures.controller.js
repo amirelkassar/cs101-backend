@@ -23,8 +23,17 @@ let LecturesController = class LecturesController {
     async listLectures() {
         return this.lectures.findAll();
     }
+    async getLecture(id) {
+        return this.lectures.findById(id);
+    }
     async createLecture(body) {
         return this.lectures.create(body);
+    }
+    async updateLecture(id, body) {
+        return this.lectures.update(id, body);
+    }
+    async deleteLecture(id) {
+        return this.lectures.remove(id);
     }
 };
 exports.LecturesController = LecturesController;
@@ -35,12 +44,34 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], LecturesController.prototype, "listLectures", null);
 __decorate([
+    (0, common_1.Get)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], LecturesController.prototype, "getLecture", null);
+__decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], LecturesController.prototype, "createLecture", null);
+__decorate([
+    (0, common_1.Put)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], LecturesController.prototype, "updateLecture", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], LecturesController.prototype, "deleteLecture", null);
 exports.LecturesController = LecturesController = __decorate([
     (0, common_1.Controller)('lectures'),
     __metadata("design:paramtypes", [lectures_service_1.LecturesService])

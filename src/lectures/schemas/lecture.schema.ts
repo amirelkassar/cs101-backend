@@ -1,15 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, SchemaTypes } from 'mongoose';
 
 export type LectureDocument = HydratedDocument<Lecture>;
-
-@Schema()
-export class PageRef {
-  @Prop() id: string;
-  @Prop() title: string;
-  @Prop() contentFile?: string;
-}
-export const PageRefSchema = SchemaFactory.createForClass(PageRef);
 
 @Schema({ timestamps: true })
 export class Lecture {
@@ -19,8 +11,8 @@ export class Lecture {
   @Prop({ default: 0 })
   order: number;
 
-  @Prop({ type: [PageRefSchema], default: [] })
-  pages: PageRef[];
+  @Prop({ type: [SchemaTypes.ObjectId], ref: 'Page', default: [] })
+  pages: string[];
 }
 
 export const LectureSchema = SchemaFactory.createForClass(Lecture);

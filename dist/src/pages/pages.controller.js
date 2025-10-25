@@ -20,14 +20,29 @@ let PagesController = class PagesController {
     constructor(pages) {
         this.pages = pages;
     }
+    async listPages() {
+        return this.pages.findAll();
+    }
     async getPage(id) {
         return this.pages.findById(id);
     }
     async createPage(body) {
         return this.pages.create(body);
     }
+    async updatePage(id, body) {
+        return this.pages.update(id, body);
+    }
+    async deletePage(id) {
+        return this.pages.remove(id);
+    }
 };
 exports.PagesController = PagesController;
+__decorate([
+    (0, common_1.Get)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], PagesController.prototype, "listPages", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
@@ -42,6 +57,21 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], PagesController.prototype, "createPage", null);
+__decorate([
+    (0, common_1.Put)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], PagesController.prototype, "updatePage", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], PagesController.prototype, "deletePage", null);
 exports.PagesController = PagesController = __decorate([
     (0, common_1.Controller)('pages'),
     __metadata("design:paramtypes", [pages_service_1.PagesService])

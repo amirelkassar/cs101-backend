@@ -14,7 +14,12 @@ const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 let Page = class Page {
     id;
+    slug;
     title;
+    description;
+    tags;
+    estimatedTime;
+    sections;
     content;
 };
 exports.Page = Page;
@@ -23,9 +28,29 @@ __decorate([
     __metadata("design:type", String)
 ], Page.prototype, "id", void 0);
 __decorate([
+    (0, mongoose_1.Prop)({ required: true, unique: true }),
+    __metadata("design:type", String)
+], Page.prototype, "slug", void 0);
+__decorate([
     (0, mongoose_1.Prop)({ required: true }),
     __metadata("design:type", String)
 ], Page.prototype, "title", void 0);
+__decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", String)
+], Page.prototype, "description", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: [String], default: [] }),
+    __metadata("design:type", Array)
+], Page.prototype, "tags", void 0);
+__decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", Number)
+], Page.prototype, "estimatedTime", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.SchemaTypes.Mixed }),
+    __metadata("design:type", Object)
+], Page.prototype, "sections", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.SchemaTypes.Mixed }),
     __metadata("design:type", Object)

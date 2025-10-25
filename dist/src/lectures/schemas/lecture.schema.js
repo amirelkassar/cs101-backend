@@ -9,30 +9,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LectureSchema = exports.Lecture = exports.PageRefSchema = exports.PageRef = void 0;
+exports.LectureSchema = exports.Lecture = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
-let PageRef = class PageRef {
-    id;
-    title;
-    contentFile;
-};
-exports.PageRef = PageRef;
-__decorate([
-    (0, mongoose_1.Prop)(),
-    __metadata("design:type", String)
-], PageRef.prototype, "id", void 0);
-__decorate([
-    (0, mongoose_1.Prop)(),
-    __metadata("design:type", String)
-], PageRef.prototype, "title", void 0);
-__decorate([
-    (0, mongoose_1.Prop)(),
-    __metadata("design:type", String)
-], PageRef.prototype, "contentFile", void 0);
-exports.PageRef = PageRef = __decorate([
-    (0, mongoose_1.Schema)()
-], PageRef);
-exports.PageRefSchema = mongoose_1.SchemaFactory.createForClass(PageRef);
+const mongoose_2 = require("mongoose");
 let Lecture = class Lecture {
     title;
     order;
@@ -48,7 +27,7 @@ __decorate([
     __metadata("design:type", Number)
 ], Lecture.prototype, "order", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: [exports.PageRefSchema], default: [] }),
+    (0, mongoose_1.Prop)({ type: [mongoose_2.SchemaTypes.ObjectId], ref: 'Page', default: [] }),
     __metadata("design:type", Array)
 ], Lecture.prototype, "pages", void 0);
 exports.Lecture = Lecture = __decorate([

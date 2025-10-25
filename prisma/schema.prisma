@@ -7,33 +7,62 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-type PageRef {
-  id          String
-  title       String
-  contentFile String?
+type ContentElement {
+  type        String
+  title       String?
+  text        String?
+  ordered     Boolean?
+  items       String[]
+  code        String?
+  language    String?
+  src         String?
+  height      Int?
+  style       String?
+  attribution String?
+}
+
+type Section {
+  id      String?
+  type    String
+  title   String?
+  content ContentElement[]
+}
+
+enum LogLevel {
+  INFO
+  WARN
+  ERROR
 }
 
 model Page {
+  id            String   @id @map("_id") @default(auto()) @db.ObjectId
+  slug          String   @unique
+  title         String
+  description   String?
+  tags          String[] @default([])
+  estimatedTime Int?
+  sections      Section[]
+  content       Json?
+  lectureId     String?  @db.ObjectId
+  lecture       Lecture? @relation(fields: [lectureId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+@@index([createdAt])
+}
+
+model Lecture {
   id        String   @id @map("_id") @default(auto()) @db.ObjectId
-  slug      String   @unique
   title     String
-  content   Json
+  order     Int      @default(0)
+  pages     Page[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model Lecture {
-  id        String    @id @map("_id") @default(auto()) @db.ObjectId
-  title     String
-  order     Int       @default(0)
-  pages     PageRef[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-}
-
 model Log {
   id        String   @id @map("_id") @default(auto()) @db.ObjectId
-  level     String
+  level     LogLevel
   message   String
   context   Json?
   timestamp DateTime @default(now())

@@ -25,9 +25,27 @@ let LecturesService = class LecturesService {
     async findAll() {
         return this.lectureModel.find().sort({ order: 1 }).lean();
     }
+    async findById(id) {
+        const doc = await this.lectureModel.findById(id).lean();
+        if (!doc)
+            throw new common_1.NotFoundException(`Lecture ${id} not found`);
+        return doc;
+    }
     async create(data) {
         const created = await this.lectureModel.create(data);
         return created.toObject();
+    }
+    async update(id, data) {
+        const updated = await this.lectureModel.findByIdAndUpdate(id, data, { new: true }).lean();
+        if (!updated)
+            throw new common_1.NotFoundException(`Lecture ${id} not found`);
+        return updated;
+    }
+    async remove(id) {
+        const res = await this.lectureModel.findByIdAndDelete(id).lean();
+        if (!res)
+            throw new common_1.NotFoundException(`Lecture ${id} not found`);
+        return { deleted: true };
     }
 };
 exports.LecturesService = LecturesService;
