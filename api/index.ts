@@ -1,4 +1,4 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+import type { IncomingMessage, ServerResponse } from 'http'
 import serverlessExpress from '@vendia/serverless-express';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../src/app.module';
@@ -44,7 +44,7 @@ async function bootstrapServer() {
   return serverlessExpress({ app: expressApp });
 }
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: IncomingMessage, res: ServerResponse) {
   if (!cachedHandler) {
     cachedHandler = await bootstrapServer();
   }
