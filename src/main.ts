@@ -9,11 +9,13 @@ import { AllExceptionsFilter } from './interceptors/all-exceptions.filter';
 import { ResponseTransformInterceptor } from './interceptors/response-transform.interceptor';
 import { ZodValidationPipe } from 'nestjs-zod';
 import { ExpressAdapter } from '@nestjs/platform-express';
-import * as express from 'express';
+import express from 'express';
 
+// Create a single Express instance for both Nest adapter and Vercel export
+const expressApp = express();
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, new ExpressAdapter(express), {
+  const app = await NestFactory.create(AppModule, new ExpressAdapter(expressApp), {
     logger: WinstonModule.createLogger({ transports: winstonTransports }),
   });
 
@@ -34,7 +36,10 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('docs', app, document); // changed from /api → /docs for clarity
+  SwaggerModule.setup('docs', app, document);
+
+  // Default route: redirect to Swagger docs
+  expressApp.get('/', (_req, res) => res.redirect('/docs'));
 
   await app.init();
 
@@ -49,4 +54,4 @@ async function bootstrap() {
 bootstrap();
 
 // 🧩 Export Express server for Vercel
-export default express;
+export default expressApp;
