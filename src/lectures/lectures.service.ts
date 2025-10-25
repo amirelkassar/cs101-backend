@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Lecture, LectureDocument } from './schemas/lecture.schema';
 import { LectureDetail, LecturePageRef, LectureSummary } from './dto/lecture-response.dto';
+import { Page, PageDocument } from '../pages/schemas/page.schema';
 
 function isPopulatedPage(p: unknown): p is { _id: Types.ObjectId; title: string; slug: string; icon: string } {
   return (
@@ -17,7 +18,10 @@ function isPopulatedPage(p: unknown): p is { _id: Types.ObjectId; title: string;
 
 @Injectable()
 export class LecturesService {
-  constructor(@InjectModel(Lecture.name) private lectureModel: Model<LectureDocument>) {}
+  constructor(
+    @InjectModel(Lecture.name) private lectureModel: Model<LectureDocument>,
+    @InjectModel(Page.name) private pageModel: Model<PageDocument>,
+  ) {}
 
   async findAll(): Promise<LectureSummary[]> {
     const lectures = await this.lectureModel
@@ -32,15 +36,18 @@ export class LecturesService {
   async findById(id: string): Promise<LectureDetail> {
     const doc = await this.lectureModel
       .findById(id)
-      .populate({ path: 'pages', select: 'slug title icon', model: 'Page' })
+      .select({ pages: 1, title: 1, order: 1 })
       .lean<{ _id: Types.ObjectId; title: string; order: number; pages?: unknown } | null>();
 
     if (!doc) throw new NotFoundException(`Lecture ${id} not found`);
 
-    const pagesArray = Array.isArray(doc.pages) ? doc.pages : [];
-    const pages: LecturePageRef[] = pagesArray
-      .filter((p): p is { _id: Types.ObjectId; title: string; slug: string; icon: string } => isPopulatedPage(p))
-      .map((p) => ({ id: String(p._id), title: p.title, slug: p.slug, icon: p.icon }));
+    const pageDocs = await this.pageModel
+      .find({ lectureId: id })
+      .select({ slug: 1, title: 1, icon: 1 })
+      .sort({ title: 1 })
+      .lean<{ _id: Types.ObjectId; title: string; slug: string; icon: string }[]>();
+
+    const pages: LecturePageRef[] = pageDocs.map((p) => ({ id: String(p._id), title: p.title, slug: p.slug, icon: p.icon }));
 
     return { id: String(doc._id), title: doc.title, order: doc.order, pages };
   }
