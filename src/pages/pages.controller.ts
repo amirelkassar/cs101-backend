@@ -1,32 +1,58 @@
-import { Body, Controller, Get, Param, Post, Put, Delete } from '@nestjs/common';
-import { PagesService } from './pages.service';
+import { Body, Controller, Get, Param, Post, Put, Delete, UsePipes, ValidationPipe } from '@nestjs/common'
+import { PagesService } from './pages.service'
+import { CreatePageDto } from './dto/create-page.dto'
+import { UpdatePageDto } from './dto/update-page.dto'
+import { PageIdParam } from './dto/page-id.param'
+import { ApiTags, ApiOperation, ApiOkResponse, ApiCreatedResponse, ApiParam, ApiNotFoundResponse, ApiBadRequestResponse, ApiBody } from '@nestjs/swagger'
 
+@ApiTags('pages')
+@UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
 @Controller('pages')
 export class PagesController {
   constructor(private readonly pages: PagesService) {}
 
   @Get()
+  @ApiOperation({ summary: 'List all pages' })
+  @ApiOkResponse({ description: 'Pages retrieved successfully.' })
   async listPages() {
-    return this.pages.findAll();
+    return this.pages.findAll()
   }
 
   @Get(':id')
-  async getPage(@Param('id') id: string) {
-    return this.pages.findById(id);
+  @ApiOperation({ summary: 'Get a page by ID' })
+  @ApiParam({ name: 'id', description: 'Unique page identifier' })
+  @ApiOkResponse({ description: 'Page retrieved successfully.' })
+  @ApiNotFoundResponse({ description: 'Page not found.' })
+  async getPage(@Param() params: PageIdParam) {
+    return this.pages.findById(params.id)
   }
 
   @Post()
-  async createPage(@Body() body: any) {
-    return this.pages.create(body);
+  @ApiOperation({ summary: 'Create a new page' })
+  @ApiCreatedResponse({ description: 'Page created successfully.' })
+  @ApiBadRequestResponse({ description: 'Invalid page payload.' })
+  @ApiBody({ type: CreatePageDto })
+  async createPage(@Body() body: CreatePageDto) {
+    return this.pages.create(body)
   }
 
   @Put(':id')
-  async updatePage(@Param('id') id: string, @Body() body: any) {
-    return this.pages.update(id, body);
+  @ApiOperation({ summary: 'Update an existing page' })
+  @ApiParam({ name: 'id', description: 'Unique page identifier' })
+  @ApiOkResponse({ description: 'Page updated successfully.' })
+  @ApiNotFoundResponse({ description: 'Page not found.' })
+  @ApiBadRequestResponse({ description: 'Invalid page payload.' })
+  @ApiBody({ type: UpdatePageDto })
+  async updatePage(@Param() { id }: PageIdParam, @Body() body: UpdatePageDto) {
+    return this.pages.update(id, body)
   }
 
   @Delete(':id')
-  async deletePage(@Param('id') id: string) {
-    return this.pages.remove(id);
+  @ApiOperation({ summary: 'Delete a page' })
+  @ApiParam({ name: 'id', description: 'Unique page identifier' })
+  @ApiOkResponse({ description: 'Page deleted successfully.' })
+  @ApiNotFoundResponse({ description: 'Page not found.' })
+  async deletePage(@Param() params: PageIdParam) {
+    return this.pages.remove(params.id)
   }
 }

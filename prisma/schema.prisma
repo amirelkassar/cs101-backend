@@ -42,7 +42,7 @@ model Page {
   tags          String[] @default([])
   estimatedTime Int?
   sections      Section[]
-  content       Json?
+  icon          String
   lectureId     String?  @db.ObjectId
   lecture       Lecture? @relation(fields: [lectureId], references: [id])
   createdAt     DateTime @default(now())

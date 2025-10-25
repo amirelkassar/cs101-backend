@@ -8,11 +8,14 @@ export class Page {
   @Prop({ required: true, unique: true })
   id: string;
 
-  @Prop({ required: true, unique: true })
-  slug: string;
+  @Prop({ unique: true })
+  slug?: string;
 
   @Prop({ required: true })
   title: string;
+
+  @Prop({ required: true })
+  icon: string;
 
   @Prop()
   description?: string;
@@ -23,11 +26,11 @@ export class Page {
   @Prop()
   estimatedTime?: number;
 
-  @Prop({ type: SchemaTypes.Mixed })
-  sections?: any;
+  @Prop({ type: [SchemaTypes.Mixed], default: [] })
+  sections?: any[];
 
-  @Prop({ type: SchemaTypes.Mixed })
-  content?: any;
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Lecture' })
+  lectureId?: string;
 }
 
 export const PageSchema = SchemaFactory.createForClass(Page);
