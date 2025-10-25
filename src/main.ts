@@ -34,6 +34,13 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   const port = Number(process.env.PORT) || 3001;
+
+  // On Vercel serverless, do not call listen(); just init the app.
+  if (process.env.VERCEL) {
+    await app.init();
+    return;
+  }
+
   await app.listen(port);
 }
 bootstrap();
