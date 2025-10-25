@@ -8,39 +8,45 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AllExceptionsFilter } from './interceptors/all-exceptions.filter';
 import { ResponseTransformInterceptor } from './interceptors/response-transform.interceptor';
 import { ZodValidationPipe } from 'nestjs-zod';
+import { ExpressAdapter } from '@nestjs/platform-express';
+import * as express from 'express';
+
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create(AppModule, new ExpressAdapter(express), {
     logger: WinstonModule.createLogger({ transports: winstonTransports }),
   });
 
   const loggerService = app.get(LoggerService);
 
+  // 🌐 Global middleware
   app.useGlobalInterceptors(new LoggingInterceptor(loggerService));
   app.useGlobalInterceptors(new ResponseTransformInterceptor());
   app.useGlobalFilters(new AllExceptionsFilter(loggerService));
-  
-  // Global Zod validation pipe for clearer, fluent validation
   app.useGlobalPipes(new ZodValidationPipe());
-
   app.enableCors({ origin: true });
 
+  // 📘 Swagger setup
   const swaggerConfig = new DocumentBuilder()
     .setTitle('CS101 API')
     .setDescription('API documentation')
     .setVersion('1.0.0')
     .build();
+
   const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('docs', app, document); // changed from /api → /docs for clarity
 
-  const port = Number(process.env.PORT) || 3001;
+  await app.init();
 
-  // On Vercel serverless, do not call listen(); just init the app.
-  if (process.env.VERCEL) {
-    await app.init();
-    return;
+  // 🟢 Local dev mode (run the server)
+  if (!process.env.VERCEL) {
+    const port = Number(process.env.PORT) || 3001;
+    await app.listen(port);
+    console.log(`🚀 Server running on http://localhost:${port}`);
   }
-
-  await app.listen(port);
 }
+
 bootstrap();
+
+// 🧩 Export Express server for Vercel
+export default express;
