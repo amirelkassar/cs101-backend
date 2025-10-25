@@ -21,7 +21,7 @@ export class LecturesService {
   constructor(
     @InjectModel(Lecture.name) private lectureModel: Model<LectureDocument>,
     @InjectModel(Page.name) private pageModel: Model<PageDocument>,
-  ) {}
+  ) { }
 
   async findAll(): Promise<LectureSummary[]> {
     const lectures = await this.lectureModel
@@ -44,7 +44,7 @@ export class LecturesService {
     const pageDocs = await this.pageModel
       .find({ lectureId: id })
       .select({ slug: 1, title: 1, icon: 1 })
-      .sort({ title: 1 })
+      .sort({ _id: 1 })
       .lean<{ _id: Types.ObjectId; title: string; slug: string; icon: string }[]>();
 
     const pages: LecturePageRef[] = pageDocs.map((p) => ({ id: String(p._id), title: p.title, slug: p.slug, icon: p.icon }));

@@ -10,7 +10,7 @@ export class PagesService {
   async findAll(lectureId?: string): Promise<Page[]> {
     const filter: any = {};
     if (lectureId) filter.lectureId = lectureId;
-    return this.pageModel.find(filter).sort({ title: 1 }).lean();
+    return this.pageModel.find(filter).sort({ _id: 1 }).lean();
   }
 
   async findById(id: string): Promise<Page> {

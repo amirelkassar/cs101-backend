@@ -8,7 +8,6 @@ export const UpdatePageSchema = z.object({
   description: z.string().optional(),
   tags: z.array(z.string()).optional(),
   estimatedTime: z.number().int().min(0).optional(),
-  content: z.any().optional(),
   sections: z.array(z.any()).optional(),
   lectureId: z
     .string()
