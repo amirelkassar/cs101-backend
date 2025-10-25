@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { LogLevel } from '@prisma/client';
+// Define local enum-like union so we don't depend on Prisma types
+type LogLevel = 'INFO' | 'WARN' | 'ERROR';
 
 @Injectable()
 export class LoggerService {
@@ -21,7 +22,7 @@ export class LoggerService {
     }
 
     try {
-      await this.prisma.log.create({ data: { level, message, context: (context as any) ?? undefined } });
+      await this.prisma.log.create({ data: { level: level as any, message, context: (context as any) ?? undefined } });
     } catch (err: any) {
       const code = err?.code ?? 'UNKNOWN';
       const msg = err?.message ?? 'Unspecified error';
@@ -31,15 +32,15 @@ export class LoggerService {
   }
 
   async info(message: string, context?: unknown): Promise<void> {
-    await this.write('INFO' as LogLevel, message, context);
+    await this.write('INFO', message, context);
   }
 
   async error(message: string, context?: unknown): Promise<void> {
-    await this.write('ERROR' as LogLevel, message, context);
+    await this.write('ERROR', message, context);
   }
 
   async warn(message: string, context?: unknown): Promise<void> {
-    await this.write('WARN' as LogLevel, message, context);
+    await this.write('WARN', message, context);
   }
 
   async debug(message: string, context?: unknown): Promise<void> {
